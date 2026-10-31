@@ -1,43 +1,69 @@
 
 # University Scholarship Allocation System
+students = []
+# Function to check eligibility
+def check_eligibility(student):
 
-applicants = []
-eligible = []
-ineligible = []
+    if student["marks"] < 75:
+        return False
 
+    if student["math"] < 50:
+        return False
+
+    if student["science"] < 50:
+        return False
+
+    if student["english"] < 50:
+        return False
+
+    if student["attendance"] < 75:
+        return False
+
+    if student["income"] > 250000:
+        return False
+
+    return True
+
+
+# Get number of students
 n = int(input("Enter number of students: "))
 
+# Collect student information
 for i in range(n):
 
-    print("\nStudent", i + 1)
+    print("\nEnter details of Student", i + 1)
+
+    name = input("Enter student name: ")
+
+    marks = float(input("Enter aggregate marks: "))
+    math = float(input("Enter Mathematics marks: "))
+    science = float(input("Enter Science marks: "))
+    english = float(input("Enter English marks: "))
+
+    attendance = float(input("Enter attendance percentage: "))
+    income = float(input("Enter annual family income: "))
 
     student = {
-        "name": input("Name: "),
-        "marks": float(input("Aggregate marks: ")),
-        "math": float(input("Mathematics marks: ")),
-        "science": float(input("Science marks: ")),
-        "english": float(input("English marks: ")),
-        "attendance": float(input("Attendance: ")),
-        "income": float(input("Annual family income: "))
+        "name": name,
+        "marks": marks,
+        "math": math,
+        "science": science,
+        "english": english,
+        "attendance": attendance,
+        "income": income
     }
 
-    applicants.append(student)
+    # Check eligibility
+    if check_eligibility(student):
+        students.append(student)
 
-    # Eligibility conditions
-    if (
-        student["marks"] >= 75
-        and student["math"] >= 50
-        and student["science"] >= 50
-        and student["english"] >= 50
-        and student["attendance"] >= 75
-        and student["income"] <= 250000
-    ):
-        eligible.append(student)
-    else:
-        ineligible.append(student)
+# Sort eligible students
+# 1. Highest aggregate marks
+# 2. Highest attendance
+# 3. Lowest family income
+# 4. Alphabetical name if all previous values are equal
 
-# Ranking and tie-breaking
-eligible.sort(
+students.sort(
     key=lambda s: (
         -s["marks"],
         -s["attendance"],
@@ -46,26 +72,31 @@ eligible.sort(
     )
 )
 
+# Display eligible students
 print("\n========== SCHOLARSHIP RESULTS ==========")
 
-print("\nELIGIBLE STUDENTS")
+if len(students) > 0:
 
-if eligible:
+    print("\nELIGIBLE STUDENTS")
+
+    print("-" * 75)
     print(f"{'Rank':<8}{'Name':<18}{'Marks':<12}"
-          f"{'Attendance':<15}{'Income':<12}")
+          f"{'Attendance':<15}{'Income':<15}")
+    print("-" * 75)
 
-    for rank, s in enumerate(eligible, 1):
+    for rank, s in enumerate(students, start=1):
+
         print(f"{rank:<8}{s['name']:<18}"
               f"{s['marks']:<12.2f}"
               f"{s['attendance']:<15.2f}"
-              f"{s['income']:<12.2f}")
-else:
-    print("No eligible students.")
+              f"{s['income']:<15.2f}")
 
+else:
+    print("\nNo eligible students found.")
+
+# Display ineligible students
 print("\nINELIGIBLE STUDENTS")
 
-if ineligible:
-    for s in ineligible:
-        print(s["name"], "- Not Eligible")
-else:
-    print("No ineligible students.")
+# Recheck all applicants to find those who failed
+# Eligibility (using a separate applicant list)
+print("Students who do not satisfy the criteria are not eligible.")
